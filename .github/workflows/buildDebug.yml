@@ -44,7 +44,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           arguments: ${{ matrix.target }}
-
+  
+  notify:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Send notification on Slack
         uses: rtCamp/action-slack-notify@v2.2.0
         if: ${{ success() }}
