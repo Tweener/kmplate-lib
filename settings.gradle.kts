@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Kmplate_Library"
+rootProject.name = "Kmplate_Library" // TODO change here
 include(":changehere")
