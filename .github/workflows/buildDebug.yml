@@ -44,7 +44,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           arguments: ${{ matrix.target }}
-  
+
   notify:
     needs: build
     runs-on: ubuntu-latest

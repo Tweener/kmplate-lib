@@ -1,4 +1,4 @@
-# Kmplate
+# Kmplate-lib
 
 Kmplate-lib is a template to easily create a new Kotlin Multiplaform library with Maven Central publishing configuration.
 
@@ -17,7 +17,27 @@ To configure these 2 Slack bots, we need to create 3 [Github Actions variables](
 2. `SLACK_GITHUB_ACTIONS_DEPENDENCY_UPDATES_ICON_URL`: the icon URL to be used as a profile picture for the "Dependency Updates" Slack bot.
 3. `SLACK_GITHUB_ACTIONS_ICON_URL`: the icon URL to be used as a profile picture for the "Github Actions CI" Slack bot.
 
-### 3. Rename package name to your own
+### 3. Configure publishing on Maven Central with Sonatype
+
+Publishing the library is done via Github Actions, from the workflow `.github/workflows/publish.yml`, and will automatically publish a new version of the library to Maven Central, for every new
+release created on Github.
+
+- First, you need to create an account on Sonatype. Follow this guide: https://central.sonatype.org/publish/publish-guide/. You should end up with a **username**, a **password** and a **staging
+  profile ID**.
+- Once you have your account, you need to request the creation of your groupId (ie. 'com.mycompany.myname'). Create an issue on their Jira. Example: https://issues.sonatype.org/browse/OSSRH-97913.
+- Then, create your secret key by following this guide: https://central.sonatype.org/publish/requirements/gpg/. You should end up with a **secret key**, a **secret key ID** and a **secret key password
+  **.
+
+To configure the publishing, we need to create 6 [Github Actions secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets):
+
+1. `OSSRH_GPG_SECRET_KEY`: The value of the secret key created.
+2. `OSSRH_GPG_SECRET_KEY_ID`: The ID of the secret key created (the last 16 digits).
+3. `OSSRH_GPG_SECRET_KEY_PASSWORD`: The password of the secret key created.
+4. `OSSRH_PASSWORD`: Your Sonatype account password.
+5. `OSSRH_STAGING_PROFILE_ID`: Your Sonatype staging profile ID.
+6. `OSSRH_USERNAME`: Your Sonatype account username.
+
+### 4. Rename package name to your own
 
 1. Open `buildSrc/src/main/kotlin/Dependencies.kt` and rename the following things:
     1. _Line 21_: Change `MyProject` object name to your own project name,
@@ -36,6 +56,6 @@ To configure these 2 Slack bots, we need to create 3 [Github Actions variables](
     2. `changehere/src/androidMain/kotlin/com/tweener/changehere`
     3. `changehere/src/iosMain/kotlin/com/tweener/changehere`
 
-### 4. Rename Github Actions names
+### 5. Rename Github Actions names
 
-1. Open `.github/workflows/buildDebug.xml` and replace `Kplate` on lines 1, 42 and 54 by your own name.
+1. Open `.github/workflows/buildDebug.xml` and replace `Kmplate-lib` on lines 1, 60 and 72 by your own name.
