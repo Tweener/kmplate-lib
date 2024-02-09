@@ -58,4 +58,5 @@ To configure the publishing, we need to create 6 [Github Actions secrets](https:
 
 ### 5. Rename Github Actions names
 
-1. Open `.github/workflows/buildDebug.xml` and replace `Kmplate-lib` on lines 1, 60 and 72 by your own name.
+1. Open `.github/workflows/buildRelease.yml` and replace `Kmplate-lib` on lines 1, 60 and 72 by your own library name.
+2. Open `.github/workflows/notify.yml` and replace `Kmplate-lib` on lines 21 and 33 by your own library name.
