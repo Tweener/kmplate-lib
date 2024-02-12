@@ -40,9 +40,9 @@ To configure the publishing, we need to create 6 [Github Actions secrets](https:
 ### 4. Rename package name to your own
 
 1. Open `buildSrc/src/main/kotlin/Dependencies.kt` and rename the following things:
-    1. _Line 21_: Change `MyProject` object name to your own project name,
-    2. _Line 22_: Change `com.tweener.changehere` package name to your own package name.
-    3. _Line 29_: Change all the properties within the `object Maven` block to your own Maven Central publishing configuration.
+    1. _Line 22_: Change `MyProject` object name to your own project name,
+    2. _Line 23_: Change `com.tweener.changehere` package name to your own package name.
+   3. _Line 30_: Change all the properties within the `object Maven` block to your own Maven Central publishing configuration.
 2. Rename module `changehere` to the name of your library. This is the name that will be shown when published to Maven Central.
 3. Open `settings.gradle.kts` and change `MyProjectName` on line 17 by your own project name.
 4. Open `changehere/build.gradle.kts` (or `yourlibraryname/build.gradle.kts` if you renamed the module on step 2) and change `changehere` on line 65 with your own iOS framework name.
