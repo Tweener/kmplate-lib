@@ -74,6 +74,7 @@ kotlin {
             implementation(Dependencies.Libraries.annotations)
 
             // Tweener
+            implementation(project.dependencies.platform(Dependencies.Libraries.Tweener.bom))
             implementation(Dependencies.Libraries.Tweener.common)
 
             // Coroutines

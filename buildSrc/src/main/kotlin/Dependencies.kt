@@ -48,7 +48,7 @@ object Dependencies {
         }
 
         object Tweener {
-            const val common = "1.0.0"
+            const val bom = "1.0.0"
         }
 
         object Android {
@@ -66,7 +66,8 @@ object Dependencies {
         const val annotations = "androidx.annotation:annotation:${Versions.annotations}"
 
         object Tweener {
-            const val common = "io.github.tweener:kmp-common:${Versions.Tweener.common}"
+            const val bom = "io.github.tweener:kmp-bom:${Versions.Tweener.bom}"
+            const val common = "io.github.tweener:kmp-common"
         }
 
         object Coroutines {
