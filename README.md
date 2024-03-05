@@ -1,6 +1,6 @@
 # Kmplate-lib
 
-Kmplate-lib is a template to easily create a new Kotlin Multiplaform library with Maven Central publishing configuration.
+Kmplate-lib is a template to easily create a new Kotlin Multiplatform library with Maven Central publishing configuration.
 
 ### 1. Create a webhook post messages on Slack
 
