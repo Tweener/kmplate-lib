@@ -9,8 +9,8 @@ object Dependencies {
 
     object Versions {
 
-        const val kotlin = "1.9.21"
-        const val gradle = "8.1.4"
+        const val kotlin = "2.0.0"
+        const val gradle = "8.2.2"
         const val dependencyVersionsPlugin = "0.51.0"
         const val nexusSonatype = "2.0.0-rc-1"
         const val dokka = "1.9.10"
@@ -48,7 +48,7 @@ object Dependencies {
         }
 
         object Tweener {
-            const val bom = "1.0.0"
+            const val bom = "2.0.0"
         }
 
         object Android {
