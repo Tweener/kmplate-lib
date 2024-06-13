@@ -17,7 +17,6 @@ androidCore = "1.13.1"
 
 [libraries]
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
-android-annotations = { group = "androidx.annotation", name = "annotation", version.ref = "androidAnnotations" }
 
 # Tweener
 tweener-bom = { group = "io.github.tweener", name = "kmp-bom", version.ref = "tweenerBom" }
@@ -30,6 +29,7 @@ kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-c
 # Android
 android-desugarjdklibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 android-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidCore" }
+android-annotations = { group = "androidx.annotation", name = "annotation", version.ref = "androidAnnotations" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "gradle" }
