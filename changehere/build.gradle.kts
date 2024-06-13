@@ -10,15 +10,15 @@ plugins {
 }
 
 android {
-    namespace = Dependencies.Versions.MyProject.namespace
-    compileSdk = Dependencies.Versions.MyProject.compileSDK
+    namespace = ProjectConfiguration.MyProject.namespace
+    compileSdk = ProjectConfiguration.MyProject.compileSDK
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        minSdk = Dependencies.Versions.MyProject.minSDK
+        minSdk = ProjectConfiguration.MyProject.minSDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -35,8 +35,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = Dependencies.Versions.Compiler.javaCompatibility
-        targetCompatibility = Dependencies.Versions.Compiler.javaCompatibility
+        sourceCompatibility = ProjectConfiguration.Compiler.javaCompatibility
+        targetCompatibility = ProjectConfiguration.Compiler.javaCompatibility
 
         isCoreLibraryDesugaringEnabled = true
     }
@@ -54,7 +54,7 @@ kotlin {
 
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.fromTarget(Dependencies.Versions.Compiler.jvmTarget))
+            jvmTarget.set(JvmTarget.fromTarget(ProjectConfiguration.Compiler.jvmTarget))
         }
     }
 
@@ -100,7 +100,7 @@ kotlin {
 // region Publishing
 
 // Dokka configuration
-val dokkaOutputDir = buildDir.resolve("dokka")
+val dokkaOutputDir = rootProject.layout.buildDirectory.asFile.get().resolve("dokka")
 tasks.dokkaHtml { outputDirectory.set(file(dokkaOutputDir)) }
 val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") { delete(dokkaOutputDir) }
 val javadocJar = tasks.create<Jar>("javadocJar") {
@@ -110,8 +110,8 @@ val javadocJar = tasks.create<Jar>("javadocJar") {
     from(dokkaOutputDir)
 }
 
-group = Dependencies.Versions.MyProject.Maven.group
-version = Dependencies.Versions.MyProject.versionName
+group = ProjectConfiguration.MyProject.Maven.group
+version = ProjectConfiguration.MyProject.versionName
 
 publishing {
     publications {
@@ -119,9 +119,9 @@ publishing {
             artifact(javadocJar)
 
             pom {
-                name.set(Dependencies.Versions.MyProject.Maven.name)
-                description.set(Dependencies.Versions.MyProject.Maven.description)
-                url.set(Dependencies.Versions.MyProject.Maven.packageUrl)
+                name.set(ProjectConfiguration.MyProject.Maven.name)
+                description.set(ProjectConfiguration.MyProject.Maven.description)
+                url.set(ProjectConfiguration.MyProject.Maven.packageUrl)
 
                 licenses {
                     license {
@@ -132,21 +132,21 @@ publishing {
 
                 issueManagement {
                     system.set("GitHub Issues")
-                    url.set("${Dependencies.Versions.MyProject.Maven.packageUrl}/issues")
+                    url.set("${ProjectConfiguration.MyProject.Maven.packageUrl}/issues")
                 }
 
                 developers {
                     developer {
-                        id.set(Dependencies.Versions.MyProject.Maven.Developer.id)
-                        name.set(Dependencies.Versions.MyProject.Maven.Developer.name)
-                        email.set(Dependencies.Versions.MyProject.Maven.Developer.email)
+                        id.set(ProjectConfiguration.MyProject.Maven.Developer.id)
+                        name.set(ProjectConfiguration.MyProject.Maven.Developer.name)
+                        email.set(ProjectConfiguration.MyProject.Maven.Developer.email)
                     }
                 }
 
                 scm {
-                    connection.set("scm:git:git://${Dependencies.Versions.MyProject.Maven.gitUrl}")
-                    developerConnection.set("scm:git:ssh://${Dependencies.Versions.MyProject.Maven.gitUrl}")
-                    url.set(Dependencies.Versions.MyProject.Maven.packageUrl)
+                    connection.set("scm:git:git://${ProjectConfiguration.MyProject.Maven.gitUrl}")
+                    developerConnection.set("scm:git:ssh://${ProjectConfiguration.MyProject.Maven.gitUrl}")
+                    url.set(ProjectConfiguration.MyProject.Maven.packageUrl)
                 }
             }
         }
