@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.dokka)
     id("maven-publish")
     id("signing")
 }
@@ -42,7 +42,7 @@ android {
     }
 
     dependencies {
-        coreLibraryDesugaring(Dependencies.Libraries.Android.desugarJdkLibs)
+        coreLibraryDesugaring(libs.android.desugarjdklibs)
     }
 }
 
@@ -72,23 +72,23 @@ kotlin {
     sourceSets {
 
         commonMain.dependencies {
-            implementation(Dependencies.Libraries.napier)
-            implementation(Dependencies.Libraries.annotations)
+            implementation(libs.napier)
+            implementation(libs.android.annotations)
 
             // Tweener
-            implementation(project.dependencies.platform(Dependencies.Libraries.Tweener.bom))
-            implementation(Dependencies.Libraries.Tweener.common)
+            implementation(project.dependencies.platform(libs.tweener.bom))
+            implementation(libs.tweener.common)
 
             // Coroutines
-            implementation(Dependencies.Libraries.Coroutines.core)
+            implementation(libs.kotlin.coroutines.core)
         }
 
         androidMain.dependencies {
             // Coroutines
-            implementation(Dependencies.Libraries.Coroutines.Android.android)
+            implementation(libs.kotlin.coroutines.android)
 
             // Android
-            implementation(Dependencies.Libraries.Android.AndroidX.core)
+            implementation(libs.android.core)
         }
 
         iosMain.dependencies {
