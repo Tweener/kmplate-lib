@@ -64,7 +64,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "changehere"
+            baseName = "changehere" // TODO change here to use your iOS framework name
             isStatic = true
         }
     }
