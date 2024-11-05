@@ -1,19 +1,19 @@
 [versions]
-kotlin = "2.0.20"
+kotlin = "2.0.21"
 gradle = "8.5.2"
 dependencyVersionsPlugin = "0.51.0"
 nexusSonatype = "2.0.0"
 dokka = "1.9.20"
-androidAnnotations = "1.8.2"
-coroutines = "1.9.0-RC.2"
+androidAnnotations = "1.9.1"
+coroutines = "1.9.0"
 napier = "2.7.1"
 
 # Tweener
-tweenerBom = "2.0.4"
+tweenerBom = "2.1.1"
 
 # Android
 androidDesugarJdkLibs = "2.1.2"
-androidCore = "1.13.1"
+androidCore = "1.15.0"
 
 [libraries]
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
