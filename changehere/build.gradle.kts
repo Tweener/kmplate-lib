@@ -1,5 +1,8 @@
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.net.URL
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -13,14 +16,9 @@ android {
     namespace = ProjectConfiguration.MyProject.namespace
     compileSdk = ProjectConfiguration.MyProject.compileSDK
 
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
-
     defaultConfig {
         minSdk = ProjectConfiguration.MyProject.minSDK
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -69,8 +67,26 @@ kotlin {
         }
     }
 
-    sourceSets {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser {
+            commonWebpackConfig {
+                outputFileName = "changehere.js" // TODO change here to use your JS file name
+            }
+        }
+        binaries.executable()
+    }
 
+    js(IR) {
+        browser {
+            commonWebpackConfig {
+                outputFileName = "changehere.js" // TODO change here to use your JS file name
+            }
+        }
+        binaries.executable()
+    }
+
+    sourceSets {
         commonMain.dependencies {
             implementation(libs.napier)
             implementation(libs.android.annotations)
@@ -99,24 +115,33 @@ kotlin {
 
 // region Publishing
 
-// Dokka configuration
-val dokkaOutputDir = rootProject.layout.buildDirectory.asFile.get().resolve("dokka")
-tasks.dokkaHtml { outputDirectory.set(file(dokkaOutputDir)) }
-val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") { delete(dokkaOutputDir) }
-val javadocJar = tasks.create<Jar>("javadocJar") {
-    archiveClassifier.set("javadoc")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn(deleteDokkaOutputDir, tasks.dokkaHtml)
-    from(dokkaOutputDir)
-}
-
 group = ProjectConfiguration.MyProject.Maven.group
 version = ProjectConfiguration.MyProject.versionName
+
+// Dokka configuration
+tasks.register<Jar>("dokkaJavadocJar") {
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
+}
+
+tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets.configureEach {
+        jdkVersion.set(ProjectConfiguration.Compiler.jvmTarget.toInt())
+        languageVersion.set(libs.versions.kotlin)
+
+        sourceLink {
+            localDirectory.set(rootProject.projectDir)
+            remoteUrl.set(URL(ProjectConfiguration.MyProject.Maven.packageUrl + "/tree/main"))
+            remoteLineSuffix.set("#L")
+        }
+    }
+}
 
 publishing {
     publications {
         publications.withType<MavenPublication> {
-            artifact(javadocJar)
+            artifact(tasks["dokkaJavadocJar"])
 
             pom {
                 name.set(ProjectConfiguration.MyProject.Maven.name)
