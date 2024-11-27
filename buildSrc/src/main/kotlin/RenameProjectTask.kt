@@ -119,23 +119,37 @@ abstract class RenameProjectTask : DefaultTask() {
     private fun renameDirectories(moduleName: String, dryRun: Boolean, renamedDirectories: MutableList<String>) {
         println("\n--- Renaming directories ---")
 
-        project.projectDir
-            .walkTopDown()
-            .filter { it.isDirectory && it.name == ACTUAL_MODULE_NAME && it.isInsideBuildDirectory().not() }
-            .forEach { oldDir ->
-                val newDir = File(oldDir.parentFile, moduleName)
+        fun renameDirectoryRecursively(directory: File) {
+            // Skip "build" directories and their subdirectories
+            if (directory.isInsideBuildDirectory()) {
+                println("Skipping directory inside build: ${directory.absolutePath}")
+                return
+            }
+
+            // Process subdirectories first
+            directory.listFiles { file -> file.isDirectory }?.forEach { subDir ->
+                renameDirectoryRecursively(subDir)
+            }
+
+            // Rename the current directory if it matches the target name
+            if (directory.name == ACTUAL_MODULE_NAME) {
+                val newDir = File(directory.parentFile, moduleName)
                 if (dryRun) {
-                    println("Dry run: Renamed would be: ${oldDir.absolutePath} -> ${newDir.absolutePath}")
-                    renamedDirectories.add("${oldDir.absolutePath} -> ${newDir.absolutePath} (dry run)")
+                    println("Dry run: Renamed would be: ${directory.absolutePath} -> ${newDir.absolutePath}")
+                    renamedDirectories.add("${directory.absolutePath} -> ${newDir.absolutePath} (dry run)")
                 } else {
-                    if (oldDir.renameTo(newDir)) {
-                        println("Renamed: ${oldDir.absolutePath} -> ${newDir.absolutePath}")
-                        renamedDirectories.add("${oldDir.absolutePath} -> ${newDir.absolutePath}")
+                    if (directory.renameTo(newDir)) {
+                        println("Renamed: ${directory.absolutePath} -> ${newDir.absolutePath}")
+                        renamedDirectories.add("${directory.absolutePath} -> ${newDir.absolutePath}")
                     } else {
-                        println("Failed to rename: ${oldDir.absolutePath}. Check if the directory is in use or locked.")
+                        println("Failed to rename: ${directory.absolutePath}. Check if it's in use or locked.")
                     }
                 }
             }
+        }
+
+        // Start recursion from the project root directory
+        renameDirectoryRecursively(project.projectDir)
     }
 
     private fun printSummary(renamedDirectories: List<String>, updatedFiles: List<String>, dryRun: Boolean) {
