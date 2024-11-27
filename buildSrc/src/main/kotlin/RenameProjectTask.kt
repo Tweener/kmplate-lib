@@ -22,7 +22,7 @@ abstract class RenameProjectTask : DefaultTask() {
 
         private const val BUILD_DIR = "build"
 
-        private const val LIBRARY_BUILD_GRADLE_FILENAME = "$ACTUAL_MODULE_NAME/build.gradle.kts"
+        private const val LIBRARY_BUILD_GRADLE_FILENAME = "build.gradle.kts"
         private const val SETTINGS_FILENAME = "settings.gradle.kts"
         private const val PROJECT_CONFIG_FILENAME = "ProjectConfiguration.kt"
         private const val THIS_TASK_FILENAME = "RenameProjectTask.kt"
@@ -62,14 +62,42 @@ abstract class RenameProjectTask : DefaultTask() {
         println("Target package name: $packageName")
         println(if (dryRun) "Dry run enabled. No changes will be applied." else "Applying changes...")
 
-        // All properties are validated, we can start renaming the project
-        val updatedFiles = mutableListOf<String>()
-        val renamedDirectories = mutableListOf<String>()
+        // Step 1: Delete existing moduleName directory if it exists
+        deleteExistingModuleDirectory(moduleName, dryRun)
 
-        replaceWordsInFiles(projectName = projectName, moduleName = moduleName, packageName = packageName, dryRun = dryRun, updatedFiles = updatedFiles)
+        // Step 2: Rename directories
+        val renamedDirectories = mutableListOf<String>()
         renameDirectories(moduleName = moduleName, dryRun = dryRun, renamedDirectories = renamedDirectories)
 
+        // Step 3: Update files
+        val updatedFiles = mutableListOf<String>()
+        replaceWordsInFiles(projectName = projectName, moduleName = moduleName, packageName = packageName, dryRun = dryRun, updatedFiles = updatedFiles)
+
+        // Step 4: Print summary
         printSummary(renamedDirectories = renamedDirectories, updatedFiles = updatedFiles, dryRun = dryRun)
+    }
+
+    private fun deleteExistingModuleDirectory(moduleName: String, dryRun: Boolean) {
+        println("\n--- Deleting existing module directory ---")
+
+        val moduleDir = File(project.projectDir, moduleName)
+
+        if (moduleDir.exists()) {
+            if (dryRun) {
+                println(
+                    "\n------ Dry run: Directory to be deleted: ${moduleDir.absolutePath}"
+                )
+            } else {
+                try {
+                    moduleDir.deleteRecursively()
+                    println("Deleted existing directory: ${moduleDir.absolutePath}")
+                } catch (e: Exception) {
+                    println("Error deleting directory: ${moduleDir.absolutePath}. Reason: ${e.message}")
+                }
+            }
+        } else {
+            println("No existing directory to delete: ${moduleDir.absolutePath}")
+        }
     }
 
     private fun replaceWordsInFiles(projectName: String, moduleName: String, packageName: String, dryRun: Boolean, updatedFiles: MutableList<String>) {
@@ -119,23 +147,18 @@ abstract class RenameProjectTask : DefaultTask() {
     private fun renameDirectories(moduleName: String, dryRun: Boolean, renamedDirectories: MutableList<String>) {
         println("\n--- Renaming directories ---")
 
-        fun renameDirectoryRecursively(directory: File) {
+        fun renameDirectory(directory: File) {
             // Skip "build" directories and their subdirectories
             if (directory.isInsideBuildDirectory()) {
                 println("Skipping directory inside build: ${directory.absolutePath}")
                 return
             }
 
-            // Process subdirectories first
-            directory.listFiles { file -> file.isDirectory }?.forEach { subDir ->
-                renameDirectoryRecursively(subDir)
-            }
-
             // Rename the current directory if it matches the target name
             if (directory.name == ACTUAL_MODULE_NAME) {
                 val newDir = File(directory.parentFile, moduleName)
                 if (dryRun) {
-                    println("Dry run: Renamed would be: ${directory.absolutePath} -> ${newDir.absolutePath}")
+                    println("\n------ Dry run: Renamed would be: ${directory.absolutePath} -> ${newDir.absolutePath}")
                     renamedDirectories.add("${directory.absolutePath} -> ${newDir.absolutePath} (dry run)")
                 } else {
                     if (directory.renameTo(newDir)) {
@@ -146,10 +169,15 @@ abstract class RenameProjectTask : DefaultTask() {
                     }
                 }
             }
+
+            // Process subdirectories after renaming the current directory
+            directory.listFiles { file -> file.isDirectory }?.forEach { subDir ->
+                renameDirectory(subDir)
+            }
         }
 
         // Start recursion from the project root directory
-        renameDirectoryRecursively(project.projectDir)
+        renameDirectory(project.projectDir)
     }
 
     private fun printSummary(renamedDirectories: List<String>, updatedFiles: List<String>, dryRun: Boolean) {
