@@ -56,7 +56,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "changehere" // TODO change here to use your iOS framework name
+            baseName = "changehere"
             isStatic = true
         }
     }
@@ -65,7 +65,7 @@ kotlin {
     wasmJs {
         browser {
             commonWebpackConfig {
-                outputFileName = "changehere.js" // TODO change here to use your JS file name
+                outputFileName = "changehere.js"
             }
         }
         binaries.executable()
@@ -74,7 +74,7 @@ kotlin {
     js(IR) {
         browser {
             commonWebpackConfig {
-                outputFileName = "changehere.js" // TODO change here to use your JS file name
+                outputFileName = "changehere.js"
             }
         }
         binaries.executable()
