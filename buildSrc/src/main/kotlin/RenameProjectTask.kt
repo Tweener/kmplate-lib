@@ -30,7 +30,8 @@ abstract class RenameProjectTask : DefaultTask() {
 
     init {
         group = "custom"
-        description = "Renames directories and updates project references using the provided '$PROJECT_NAME_TASK_PARAM'. Example: ./gradlew renameProject -P$PROJECT_NAME_TASK_PARAM=MyLibrary"
+        description =
+            "Renames the project's directories and updates references in files. Usage: ./gradlew renameProject -$PROJECT_NAME_TASK_PARAM=MyLibrary -$PACKAGE_NAME_TASK_PARAM=org.example.mylibrary"
     }
 
     @TaskAction
