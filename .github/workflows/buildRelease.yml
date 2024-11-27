@@ -1,4 +1,4 @@
-name: Kmplate-lib build
+name: Kmplate_Library build
 
 on:
   workflow_call:
