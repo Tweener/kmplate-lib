@@ -9,51 +9,64 @@
 
 Kmplate-lib is a template to easily create a new Kotlin Multiplatform library with Maven Central publishing configuration.
 
-### 1. Rename package name to your own
+### 1. Setup
+After cloning this repo as a template, the first thing you need to do is configure it with your desired project name and package name. This is done by running the `renameProject` Gradle task.
 
-1. Open `buildSrc/src/main/kotlin/ProjectConfiguration.kt` and rename the following things:
-   1. _Line 11_: `MyProject` object name with your own project name,
-   2. _Line 12_: `com.tweener.changehere` package name with your own package name.
-   3. _Line 19_: All the properties within the `object Maven` block with your own Maven Central publishing configuration.
-2. Rename module `changehere` with the name of your library. This is the name that will be shown when published to Maven Central.
-3. Open `settings.gradle.kts` and replace `MyProjectName` on line 17 with your own project name.
-4. Open `changehere/build.gradle.kts` (or `yourlibraryname/build.gradle.kts` if you renamed the module on step 2) and rename the following things:
-   1. _Line 65_: `changehere`  with your own iOS framework name.
-   2. _Line 74_: `changehere`  with your own JS file name for Wasm target.
-   3. _Line 83_: `changehere`  with your own JS file name for JS target.
-5. Rename packages name (`import` and `package`) in all existing files:
-   1. Click on `Edit` > `Find` > `Replace in files`,
-   2. In the first input field, type `com.tweener.changehere`,
-   3. In the second input field, type your own package name,
-   4. Click on `Replace all` button.
-6. Replace `com/tweener/changehere` with your own directory path in the following directories:
-   1. `changehere/src/commonMain/kotlin/com/tweener/changehere`
-   2. `changehere/src/androidMain/kotlin/com/tweener/changehere`
-   3. `changehere/src/iosMain/kotlin/com/tweener/changehere`
+##### Run the `renameProject` Task
+The `renameProject` task customizes the library to fit your project by:
+1. **Deleting any existing directory** with the target project name (`projectName`), if it exists.
+2. **Renaming directories** (e.g., `changehere`) to match the provided `projectName`.
+3. **Updating file references** (e.g., `settings.gradle.kts`, `build.gradle.kts`) with the new project name and package name.
+4. **Updating `package` and `import` statements** in all relevant `.kt` and configuration files.
 
-### 2. Rename Github Actions names
+##### Usage
+Run the task using the following command:
+```bash
+./gradlew renameProject -PprojectName=MyLibrary -PpackageName=com.example.mylibrary
+```
 
-1. Open `.github/workflows/buildRelease.yml` and replace `Kmplate-lib` on line 1 with your own library name.
-2. Open `.github/workflows/notify.yml` and replace `Kmplate-lib` on lines 21 and 33 with your own library name.
+This will:
+- Rename directories to use `mylibrary`.
+- Update file references to use `com.example.mylibrary`.
 
+---
 
-### 3. Configure Slack notifications for Github build status
-You can configure Slack to get notifications about Github build status.
+##### Dry Run Option
+Before making changes, you can preview the changes this task will make by using the `-PdryRun` option:
 
-##### 1. Create a webhook post messages on Slack
-1. For Github Actions to post messages on Slack, you must create a new webhook URL by using the [Incoming Webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) app.
-2. Create a new [Github Actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) with name `SLACK_WEBHOOK_URL`, and copy paste the webhook created in the previous step as  
-   value of this secret.
+```bash
+./gradlew renameProject -PprojectName=MyLibrary -PpackageName=com.example.mylibrary -PdryRun
+```
 
-##### 2. Configure the Slack bot to post on Slack
-We will configure 2 Slack bots to post message on Slack: one bot to check for outdated dependencies, and one bot for the build status.  
-To configure these 2 Slack bots, we need to create 3 [Github Actions variables](https://docs.github.com/en/actions/learn-github-actions/variables):
+This will log all planned changes without applying them.
 
-1. `SLACK_GITHUB_ACTIONS_CHANNEL_NAME`: the name of the Slack channel where Github Actions will post messages (ie. `myproject_build_status`).
-2. `SLACK_GITHUB_ACTIONS_DEPENDENCY_UPDATES_ICON_URL`: the icon URL to be used as a profile picture for the "Dependency Updates" Slack bot.
-3. `SLACK_GITHUB_ACTIONS_ICON_URL`: the icon URL to be used as a profile picture for the "Github Actions CI" Slack bot.
+##### Task Output
+After running the task, you will see:
+- A **summary of renamed directories**.
+- A **list of updated files**.
+- Any skipped or failed operations (e.g., if a file is locked).
 
-### 4. Configure publishing on Maven Central with Sonatype
+---
+
+##### Additional Notes
+1. **Mandatory Parameters**:
+   - `projectName`: The desired name for your project.
+   - `packageName`: The package name to use throughout the library.
+
+2. **Run Only Once**:
+   - This task is intended to be run only once when setting up the library for your project.
+
+3. **Dry Run**:
+   - Always recommended to run with `-PdryRun` first to ensure the changes align with your expectations.
+
+---
+
+With this task, you can seamlessly configure your library with minimal manual effort.
+
+### 2. Configure the library for Maven Central publishing
+Open `buildSrc/src/main/kotlin/ProjectConfiguration.kt` and update all the properties within the `object Maven` block.
+
+### 3. Configure publishing on Maven Central with Sonatype
 
 Publishing the library is done via Github Actions, from the workflow `.github/workflows/publish.yml`, and will automatically publish a new version of the library to Maven Central, for every new  
 release created on Github.
@@ -72,4 +85,20 @@ To configure the publishing, we need to create 6 [Github Actions secrets](https:
 4. `OSSRH_PASSWORD`: Your Sonatype account password.
 5. `OSSRH_STAGING_PROFILE_ID`: Your Sonatype staging profile ID.
 6. `OSSRH_USERNAME`: Your Sonatype account username.
+
+### 4. Configure Slack notifications for Github build status
+You can configure Slack to get notifications about Github build status.
+
+##### 1. Create a webhook post messages on Slack
+1. For Github Actions to post messages on Slack, you must create a new webhook URL by using the [Incoming Webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) app.
+2. Create a new [Github Actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) with name `SLACK_WEBHOOK_URL`, and copy paste the webhook created in the previous step as  
+   value of this secret.
+
+##### 2. Configure the Slack bot to post on Slack
+We will configure 2 Slack bots to post message on Slack: one bot to check for outdated dependencies, and one bot for the build status.  
+To configure these 2 Slack bots, we need to create 3 [Github Actions variables](https://docs.github.com/en/actions/learn-github-actions/variables):
+
+1. `SLACK_GITHUB_ACTIONS_CHANNEL_NAME`: the name of the Slack channel where Github Actions will post messages (ie. `myproject_build_status`).
+2. `SLACK_GITHUB_ACTIONS_DEPENDENCY_UPDATES_ICON_URL`: the icon URL to be used as a profile picture for the "Dependency Updates" Slack bot.
+3. `SLACK_GITHUB_ACTIONS_ICON_URL`: the icon URL to be used as a profile picture for the "Github Actions CI" Slack bot.
 
