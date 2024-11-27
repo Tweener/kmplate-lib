@@ -22,6 +22,8 @@ abstract class RenameProjectTask : DefaultTask() {
 
         private const val BUILD_DIR = "build"
 
+        private const val GITHUB_WORKFLOW_BUILD_FILENAME = "buildRelease.yml"
+        private const val GITHUB_WORKFLOW_NOTIFY_FILENAME = "notify.yml"
         private const val LIBRARY_BUILD_GRADLE_FILENAME = "build.gradle.kts"
         private const val SETTINGS_FILENAME = "settings.gradle.kts"
         private const val PROJECT_CONFIG_FILENAME = "ProjectConfiguration.kt"
@@ -105,7 +107,7 @@ abstract class RenameProjectTask : DefaultTask() {
         println("\n--- Updating words in files ---")
 
         // Find all .kt files and specified configuration files
-        val specificFilesToUpdate = listOf(SETTINGS_FILENAME, PROJECT_CONFIG_FILENAME)
+        val specificFilesToUpdate = listOf(GITHUB_WORKFLOW_BUILD_FILENAME, GITHUB_WORKFLOW_NOTIFY_FILENAME, SETTINGS_FILENAME, PROJECT_CONFIG_FILENAME)
 
         val filesToUpdate = project.projectDir
             .walkTopDown()
