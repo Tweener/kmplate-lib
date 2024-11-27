@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.dependency.versions) // ./gradlew dependencyUpdates
 }
 
+tasks.register<RenameProjectTask>("renameProject")
+
 nexusPublishing {
     repositories {
         sonatype {
