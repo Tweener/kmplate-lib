@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kmplate_Library"
 include(":changehere")
+include(":sample:composeApp")

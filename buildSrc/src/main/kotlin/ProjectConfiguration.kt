@@ -11,7 +11,7 @@ object ProjectConfiguration {
         const val packageName = "com.tweener.changehere"
         const val versionName = "1.0.0"
         const val namespace = "$packageName.android"
-        const val compileSDK = 34
+        const val compileSDK = 35
         const val minSDK = 24
 
         // TODO Change all the values in this block to your needs
