@@ -70,7 +70,7 @@ abstract class RenameProjectTask : DefaultTask() {
 
         // Step 2: Rename directories
         val renamedDirectories = mutableListOf<String>()
-        renameDirectories(moduleName = moduleName, dryRun = dryRun, renamedDirectories = renamedDirectories)
+        renameDirectories(moduleName = moduleName, packageName = packageName, dryRun = dryRun, renamedDirectories = renamedDirectories)
 
         // Step 3: Update files
         val updatedFiles = mutableListOf<String>()
@@ -147,40 +147,116 @@ abstract class RenameProjectTask : DefaultTask() {
         }
     }
 
-    private fun renameDirectories(moduleName: String, dryRun: Boolean, renamedDirectories: MutableList<String>) {
+    private fun renameDirectories(moduleName: String, packageName: String, dryRun: Boolean, renamedDirectories: MutableList<String>) {
         println("\n--- Renaming directories ---")
 
-        fun renameDirectory(directory: File) {
-            // Skip "build" directories and their subdirectories
-            if (directory.isInsideBuildDirectory()) {
-                println("Skipping directory inside build: ${directory.absolutePath}")
-                return
-            }
+        // Convert packageName to directory path (e.g., "org.example.mylibrary" -> "org/example/mylibrary")
+        val packagePath = packageName.replace(".", File.separator)
 
-            // Rename the current directory if it matches the target name
-            if (directory.name == ACTUAL_MODULE_NAME) {
-                val newDir = File(directory.parentFile, moduleName)
-                if (dryRun) {
-                    println("\n------ Dry run: Renamed would be: ${directory.absolutePath} -> ${newDir.absolutePath}")
-                    renamedDirectories.add("${directory.absolutePath} -> ${newDir.absolutePath} (dry run)")
-                } else {
-                    if (directory.renameTo(newDir)) {
-                        println("Renamed: ${directory.absolutePath} -> ${newDir.absolutePath}")
-                        renamedDirectories.add("${directory.absolutePath} -> ${newDir.absolutePath}")
+        fun processAndRenameDirectory(baseDir: File, oldHierarchy: String, newHierarchy: String) {
+            baseDir.walkTopDown()
+                .filter { file -> file.isDirectory && file.path.contains(oldHierarchy) }
+                .forEach { oldDir ->
+                    // Replace only the segment starting from `oldHierarchy`
+                    val updatedPath = oldDir.path.replace(oldHierarchy, newHierarchy)
+                    val newDirPath = File(updatedPath)
+
+                    // Ensure the full path to the new directory exists
+                    if (!newDirPath.parentFile.exists()) {
+                        if (dryRun) {
+                            println("Dry run: Would create parent directories: ${newDirPath.parentFile.absolutePath}")
+                        } else {
+                            println("Creating parent directories: ${newDirPath.parentFile.absolutePath}")
+                            newDirPath.parentFile.mkdirs()
+                        }
+                    }
+
+                    // Create the target directory
+                    if (!newDirPath.exists()) {
+                        if (dryRun) {
+                            println("Dry run: Would create directory: ${newDirPath.absolutePath}")
+                        } else {
+                            println("Creating directory: ${newDirPath.absolutePath}")
+                            newDirPath.mkdirs()
+                        }
+                    }
+
+                    // Move the files and subdirectories
+                    if (dryRun) {
+                        println("Dry run: Would move contents of: ${oldDir.absolutePath} -> ${newDirPath.absolutePath}")
+                        renamedDirectories.add("${oldDir.absolutePath} -> ${newDirPath.absolutePath} (dry run)")
                     } else {
-                        println("Failed to rename: ${directory.absolutePath}. Check if it's in use or locked.")
+                        println("Moving contents of: ${oldDir.absolutePath} -> ${newDirPath.absolutePath}")
+                        oldDir.listFiles()?.forEach { file ->
+                            val targetFile = File(newDirPath, file.name)
+                            if (file.renameTo(targetFile)) {
+                                println("Moved: ${file.absolutePath} -> ${targetFile.absolutePath}")
+                            } else {
+                                println("Failed to move: ${file.absolutePath}")
+                            }
+                        }
+
+                        // Clean up old directory if empty
+                        if (oldDir.delete()) {
+                            println("Deleted old directory: ${oldDir.absolutePath}")
+                        }
+                    }
+                }
+        }
+
+        fun deleteEmptyDirectoriesRecursively(directory: File) {
+            directory.walkBottomUp().forEach { subDir ->
+                if (subDir.isDirectory && subDir.listFiles()?.all { !it.isFile } == true) {
+                    if (dryRun) {
+                        println("Dry run: Would delete empty directory: ${subDir.absolutePath}")
+                    } else {
+                        println("Deleting empty directory: ${subDir.absolutePath}")
+                        if (!subDir.delete()) {
+                            println("Failed to delete directory: ${subDir.absolutePath}")
+                        }
                     }
                 }
             }
+        }
 
-            // Process subdirectories after renaming the current directory
-            directory.listFiles { file -> file.isDirectory }?.forEach { subDir ->
-                renameDirectory(subDir)
+        // Step 1: Rename the root "changehere" directory to "mylibrary"
+        project.projectDir.listFiles { file -> file.isDirectory }?.forEach { dir ->
+            if (dir.name == ACTUAL_MODULE_NAME) {
+                val newDir = File(dir.parentFile, moduleName)
+                if (dryRun) {
+                    println("Dry run: Root directory renamed: ${dir.absolutePath} -> ${newDir.absolutePath}")
+                    renamedDirectories.add("${dir.absolutePath} -> ${newDir.absolutePath} (dry run)")
+                } else {
+                    if (dir.renameTo(newDir)) {
+                        println("Renamed root directory: ${dir.absolutePath} -> ${newDir.absolutePath}")
+                        renamedDirectories.add("${dir.absolutePath} -> ${newDir.absolutePath}")
+                    } else {
+                        println("Failed to rename root directory: ${dir.absolutePath}. Check if it's in use or locked.")
+                    }
+                }
             }
         }
 
-        // Start recursion from the project root directory
-        renameDirectory(project.projectDir)
+        // Step 2: Rename subdirectories recursively inside "sample" and "mylibrary"
+        val oldHierarchy = "com${File.separator}tweener${File.separator}changehere"
+        project.projectDir.listFiles { file -> file.isDirectory }?.forEach { baseDir ->
+            when (baseDir.name) {
+                "sample", moduleName -> {
+                    println("Processing subdirectories in '${baseDir.name}': ${baseDir.absolutePath}")
+                    processAndRenameDirectory(baseDir, oldHierarchy, packagePath)
+                }
+            }
+        }
+
+        // Step 3: Delete all empty directories recursively in "sample" and "mylibrary"
+        project.projectDir.listFiles { file -> file.isDirectory }?.forEach { baseDir ->
+            when (baseDir.name) {
+                "sample", moduleName -> {
+                    println("Deleting empty directories inside '${baseDir.name}'")
+                    deleteEmptyDirectoriesRecursively(baseDir)
+                }
+            }
+        }
     }
 
     private fun printSummary(renamedDirectories: List<String>, updatedFiles: List<String>, dryRun: Boolean) {
