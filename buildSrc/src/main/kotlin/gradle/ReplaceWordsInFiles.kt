@@ -19,13 +19,14 @@ class ReplaceWordsInFiles {
 
         private const val THIS_TASK_FILENAME = "RenameProjectTask.kt"
         private const val RENAME_DIRECTORIES_FILENAME = "RenameDirectories.kt"
+        private const val REPLACE_WORDS_IN_FILES_FILENAME = "ReplaceWordsInFiles.kt"
         private const val DELETE_EXISTING_MODULE_FILENAME = "DeleteExistingModuleDirectory.kt"
 
         private const val ACTUAL_PROJECT_NAME = "Kmplate_Library"
         private const val ACTUAL_PROJECT_CONFIGURATION_OBJECT = "MyProject" // For ProjectConfiguration.kt
         private const val ACTUAL_PACKAGE_NAME_CONFIGURATION_OBJECT = "com.tweener.changehere" // For ProjectConfiguration.kt
 
-        private const val BUILD_SRC_DIR = "buildSrc/gradle"
+        private const val BUILD_SRC_DIR = "buildSrc"
         private const val BUILD_DIR = "build"
     }
 
@@ -36,7 +37,7 @@ class ReplaceWordsInFiles {
         val specificFilesToUpdate = listOf(GITHUB_WORKFLOW_BUILD_FILENAME, GITHUB_WORKFLOW_NOTIFY_FILENAME, SETTINGS_FILENAME, PROJECT_CONFIG_FILENAME)
 
         // Files to exclude
-        val filesToExclude = listOf(THIS_TASK_FILENAME, RENAME_DIRECTORIES_FILENAME, DELETE_EXISTING_MODULE_FILENAME)
+        val filesToExclude = listOf(THIS_TASK_FILENAME, RENAME_DIRECTORIES_FILENAME, REPLACE_WORDS_IN_FILES_FILENAME, DELETE_EXISTING_MODULE_FILENAME)
 
         val filesToUpdate = projectDir
             .walkTopDown()
