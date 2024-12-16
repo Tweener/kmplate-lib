@@ -1,13 +1,22 @@
 [![Kotlin](https://img.shields.io/badge/kotlin-2.0.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Compose](https://img.shields.io/badge/compose-1.7.1-blue.svg?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform)
 ![gradle-version](https://img.shields.io/badge/gradle-8.5.2-blue?logo=gradle)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [![Website](https://img.shields.io/badge/Author-vivienmahe.com-purple)](https://vivienmahe.com/)
 [![X/Twitter](https://img.shields.io/twitter/follow/VivienMahe)](https://twitter.com/VivienMahe)
 
+---
+
 # Kmplate-lib
 
-Kmplate-lib is a template to easily create a new Kotlin Multiplatform library with Maven Central publishing configuration.
+**Kmplate-lib** is a template to easily create a new Kotlin Multiplatform library with Maven Central publishing configuration.
+
+<br>
+
+Be sure to show your support by starring ⭐️ this repository!
+
+## 🛠️ Installation
 
 ### 1. Setup
 After cloning this repo as a template, the first thing you need to do is configure it with your desired project name and package name. This is done by running the `renameProject` Gradle task.
