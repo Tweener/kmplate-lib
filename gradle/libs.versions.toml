@@ -10,7 +10,7 @@ napier = "2.7.1"
 composeMultiplatform = "1.7.1"
 
 # Tweener
-tweenerBom = "2.2.1"
+tweenerKmpKit = "0.1.1"
 
 # Android
 androidCore = "1.15.0"
@@ -21,8 +21,7 @@ napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 compose-multiplatform-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatform" }
 
 # Tweener
-tweener-bom = { group = "io.github.tweener", name = "kmp-bom", version.ref = "tweenerBom" }
-tweener-common = { group = "io.github.tweener", name = "kmp-common" }
+tweener-kmpkit = { group = "io.github.tweener", name = "kmpkit", version.ref = "tweenerKmpKit" }
 
 # Coroutines
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
