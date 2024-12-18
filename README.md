@@ -109,3 +109,7 @@ To configure these 2 Slack bots, we need to create 3 [Github Actions variables](
 2. `SLACK_GITHUB_ACTIONS_DEPENDENCY_UPDATES_ICON_URL`: the icon URL to be used as a profile picture for the "Dependency Updates" Slack bot.
 3. `SLACK_GITHUB_ACTIONS_ICON_URL`: the icon URL to be used as a profile picture for the "Github Actions CI" Slack bot.
 
+### 4. Set Java JDK version
+
+To set the Java JDK version to use when building the library with Github Actions, you need to create another Github Actions variables `JAVA_JDK_VERSION` and set it to the desired Java JDK version (ie. `21`).
+This version will be use accross all workflows.
