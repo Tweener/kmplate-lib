@@ -11,7 +11,7 @@ jobs:
     name: Check for new versions of dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Java JDK ${{ vars.JAVA_JDK_VERSION }}"
         uses: actions/setup-java@v4
