@@ -33,7 +33,7 @@ kotlin {
             api(project(":changehere"))
 
             // Tweener
-            implementation(libs.tweener.kmpkit)
+            implementation(libs.kmpkit)
 
             // Compose
             implementation(compose.runtime)

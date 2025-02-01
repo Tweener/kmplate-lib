@@ -3,11 +3,12 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
-import java.net.URL
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.jetbrains.compose.compiler)
     alias(libs.plugins.dokka)
     id("maven-publish")
     id("signing")
@@ -33,6 +34,10 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+    }
+
     compileOptions {
         sourceCompatibility = ProjectConfiguration.Compiler.javaCompatibility
         targetCompatibility = ProjectConfiguration.Compiler.javaCompatibility
@@ -45,7 +50,6 @@ kotlin {
     androidTarget {
         publishLibraryVariants("release")
 
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.fromTarget(ProjectConfiguration.Compiler.jvmTarget))
         }
@@ -86,14 +90,28 @@ kotlin {
             implementation(libs.napier)
             implementation(libs.android.annotations)
 
+            // Compose
+            implementation(compose.ui)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.runtime)
+            implementation(compose.components.resources)
+            implementation(libs.compose.multiplatform.material3)
+
             // Tweener
-            implementation(libs.tweener.kmpkit)
+            implementation(libs.kmpkit)
 
             // Coroutines
             implementation(libs.kotlin.coroutines.core)
         }
 
         androidMain.dependencies {
+            // Compose
+            api(compose.preview)
+            api(compose.uiTooling)
+            implementation(libs.android.activity.compose)
+
             // Coroutines
             implementation(libs.kotlin.coroutines.android)
 
