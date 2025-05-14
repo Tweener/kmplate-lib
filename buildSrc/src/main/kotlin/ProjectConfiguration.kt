@@ -19,6 +19,7 @@ object ProjectConfiguration {
             const val name = "MyKMPLibrary"
             const val description = "All Tweener commons stuff for Kotlin Multiplatform"
             const val group = "io.github.tweener"
+            const val artifactId = "czan"
             const val packageUrl = "https://github.com/Tweener/czan"
             const val gitUrl = "github.com:Tweener/czan.git"
 
