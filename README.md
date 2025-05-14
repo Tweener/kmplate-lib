@@ -75,23 +75,21 @@ With this task, you can seamlessly configure your library with minimal manual ef
 ### 2. Configure the library for Maven Central publishing
 Open `buildSrc/src/main/kotlin/ProjectConfiguration.kt` and update all the properties within the `object Maven` block.
 
-### 3. Configure publishing on Maven Central with Sonatype
+### 3. Configure publishing on Maven Central
 
 Publishing the library is done via Github Actions, from the workflow `.github/workflows/publish.yml`, and will automatically publish a new version of the library to Maven Central, for every new  
 release created on Github.
 
-- First, you need to create an account on Sonatype. Follow this guide: https://central.sonatype.org/publish/publish-guide/. You should end up with a **username**, a **password** and a **staging profile ID**.
-- Once you have your account, you need to request the creation of your groupId (ie. 'com.mycompany.myname'). Create an issue on their Jira. Example: https://issues.sonatype.org/browse/OSSRH-97913.
-- Then, create your secret key by following this guide: https://central.sonatype.org/publish/requirements/gpg/. You should end up with a **secret key**, a **secret key ID** and a **secret key password**.
+- First, you need to create an account on Maven Central. Follow this guide: [https://central.sonatype.org/publish/publish-guide/](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html#prepare-accounts-and-credentials). You should end up with a **username** and a **password** from a generated user token, and a namespace (ie. `com.mycompany.myname`).
+- Then, create your secret key by following this guide: https://central.sonatype.org/publish/requirements/gpg/. You should end up with a **secret key content**, a **secret key ID** and a **secret key password**.
 
 To configure the publishing, we need to create 6 [Github Actions secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets):
 
-1. `OSSRH_GPG_SECRET_KEY`: The value of the secret key created.
-2. `OSSRH_GPG_SECRET_KEY_ID`: The ID of the secret key created (the last 16 digits).
-3. `OSSRH_GPG_SECRET_KEY_PASSWORD`: The password of the secret key created.
-4. `OSSRH_PASSWORD`: Your Sonatype account password.
-5. `OSSRH_STAGING_PROFILE_ID`: Your Sonatype staging profile ID.
-6. `OSSRH_USERNAME`: Your Sonatype account username.
+1. `GPG_SECRET_KEY_CONTENT`: The content of the secret key created.
+2. `GPG_SECRET_KEY_ID`: The ID of the secret key created (the last 16 digits).
+3. `GPG_SECRET_KEY_PASSWORD`: The password of the secret key created.
+4. `MAVEN_CENTRAL_PASSWORD`: The password of the generated User Token from your Maven Central account.
+6. `MAVEN_CENTRAL_USERNAME`: The username of the generated User Token from your Maven Central account.
 
 ### 4. Configure Slack notifications for Github build status
 You can configure Slack to get notifications about Github build status.
