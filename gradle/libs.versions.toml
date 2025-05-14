@@ -1,13 +1,14 @@
 [versions]
 kotlin = "2.1.10"
 gradle = "8.7.3"
+composeMultiplatform = "1.7.3"
 dependencyVersionsPlugin = "0.51.0"
+mavenPublish = "0.30.0"
 nexusSonatype = "2.0.0"
 dokka = "1.9.20"
 androidAnnotations = "1.9.1"
 coroutines = "1.10.1"
 napier = "2.7.1"
-composeMultiplatform = "1.7.3"
 kmpKit = "1.0.4"
 
 # Android
@@ -35,6 +36,6 @@ android-application = { id = "com.android.application", version.ref = "gradle" }
 android-library = { id = "com.android.library", version.ref = "gradle" }
 dependency-versions = { id = "com.github.ben-manes.versions", version.ref = "dependencyVersionsPlugin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-nexus-sonatype = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusSonatype" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

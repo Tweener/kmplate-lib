@@ -1,8 +1,8 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.net.URI
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -10,8 +10,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.jetbrains.compose.compiler)
     alias(libs.plugins.dokka)
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -132,71 +131,47 @@ kotlin {
 group = ProjectConfiguration.MyProject.Maven.group
 version = ProjectConfiguration.MyProject.versionName
 
-// Dokka configuration
-tasks.register<Jar>("dokkaJavadocJar") {
-    dependsOn(tasks.dokkaHtml)
-    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
-    archiveClassifier.set("javadoc")
-}
+mavenPublishing {
+    publishToMavenCentral(host = SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    signAllPublications()
+    coordinates(groupId = group.toString(), artifactId = ProjectConfiguration.MyProject.Maven.name.lowercase(), version = version.toString())
+    configure(
+        platform = KotlinMultiplatform(
+            javadocJar = JavadocJar.Dokka("dokkaHtml"),
+            sourcesJar = true,
+        )
+    )
 
-tasks.withType<DokkaTask>().configureEach {
-    dokkaSourceSets.configureEach {
-        jdkVersion.set(ProjectConfiguration.Compiler.jvmTarget.toInt())
-        languageVersion.set(libs.versions.kotlin)
+    pom {
+        name = ProjectConfiguration.MyProject.Maven.name
+        description = ProjectConfiguration.MyProject.Maven.description
+        url = ProjectConfiguration.MyProject.Maven.packageUrl
 
-        sourceLink {
-            localDirectory.set(rootProject.projectDir)
-            remoteUrl.set(URI(ProjectConfiguration.MyProject.Maven.packageUrl + "/tree/main").toURL())
-            remoteLineSuffix.set("#L")
-        }
-    }
-}
-
-publishing {
-    publications {
-        publications.withType<MavenPublication> {
-            artifact(tasks["dokkaJavadocJar"])
-
-            pom {
-                name.set(ProjectConfiguration.MyProject.Maven.name)
-                description.set(ProjectConfiguration.MyProject.Maven.description)
-                url.set(ProjectConfiguration.MyProject.Maven.packageUrl)
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                issueManagement {
-                    system.set("GitHub Issues")
-                    url.set("${ProjectConfiguration.MyProject.Maven.packageUrl}/issues")
-                }
-
-                developers {
-                    developer {
-                        id.set(ProjectConfiguration.MyProject.Maven.Developer.id)
-                        name.set(ProjectConfiguration.MyProject.Maven.Developer.name)
-                        email.set(ProjectConfiguration.MyProject.Maven.Developer.email)
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://${ProjectConfiguration.MyProject.Maven.gitUrl}")
-                    developerConnection.set("scm:git:ssh://${ProjectConfiguration.MyProject.Maven.gitUrl}")
-                    url.set(ProjectConfiguration.MyProject.Maven.packageUrl)
-                }
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
             }
         }
-    }
-}
 
-signing {
-    if (project.hasProperty("signing.gnupg.keyName")) {
-        println("Signing lib...")
-        useGpgCmd()
-        sign(publishing.publications)
+        issueManagement {
+            system = "GitHub Issues"
+            url = "${ProjectConfiguration.MyProject.Maven.packageUrl}/issues"
+        }
+
+        developers {
+            developer {
+                id = ProjectConfiguration.MyProject.Maven.Developer.id
+                name = ProjectConfiguration.MyProject.Maven.Developer.name
+                email = ProjectConfiguration.MyProject.Maven.Developer.email
+            }
+        }
+
+        scm {
+            connection = "scm:git:git://${ProjectConfiguration.MyProject.Maven.gitUrl}"
+            developerConnection = "scm:git:ssh://${ProjectConfiguration.MyProject.Maven.gitUrl}"
+            url = ProjectConfiguration.MyProject.Maven.packageUrl
+        }
     }
 }
 
